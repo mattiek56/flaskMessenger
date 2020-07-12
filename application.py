@@ -15,23 +15,42 @@ app.config["SESSION_PERMANENT"] = False
 bootstrap = Bootstrap(app)
 Session(app)
 
-
+#dictionary of users and channels
 users = []
+channels = []
+
 
 @app.route("/", methods=['POST', 'GET'])
 def index():
 	if request.method == "POST":
 		username = request.form.get('username')
-		session["user"] = username
-		return redirect("/chat")
+		#add user to the list of users
+	
+		if username not in users:	
+			users.append(username)
+		return redirect("/home")
 	else:
-		if session.get("user"):
-			return redirect('/chat')
 		return render_template("index.html")	
 
-@app.route("/chat")
-def chat():
-	if session.get("user"):
-		name = session["user"]
-		return render_template("chat.html", username=name)	
+
+@app.route("/home", methods=["POST", "GET"])
+def home():
+		
+	if request.method == "GET":
+		channels_list = channels
+		return render_template("home.html", channels = channels_list)
+
+	else:
+		new_channel = request.form.get('channel-name')
+		#check if the channel exists (need to add in not letting a creation happen if there is no value)
+		if new_channel not in channels:
+			channels.append(new_channel)
+			channels_updated = channels
+			return render_template("home.html", channels = channels_updated)
+		else: 
+			channels_list = channels
+			return render_template("home.html", channels = channels_list, error='This channel already exists')
+
+
+
 

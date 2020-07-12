@@ -1,18 +1,18 @@
-{% extends "bootstrap/base.html" %}
-
-{% block scripts %}
-
-<script type="text/javascript">
-	
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+    
         document.addEventListener('DOMContentLoaded', () => {
-
-            let socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port),
-                loginForm = document.getElementById('userform');
+  
+            loginForm = document.getElementById('userform');
 
             if (localStorage.getItem("username") != null) {
                 const username = localStorage.getItem("username");
                 console.log( "username in localStorage:", username);
                 loginForm.username.value = username;
+                window.location.href = "/home";
+
             }
 
 
@@ -20,16 +20,18 @@
                 event.preventDefault();
                 let username = loginForm.username.value;
                 localStorage.setItem("username", username);
-           
+                 
                 loginForm.submit();
+
+                
             });
 
         });
 </script>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
 
-{% endblock %}
-
-{% block body %}
+<body>
 
 <div class='container'>
 	<h1>Input a username!</h1>
@@ -38,7 +40,8 @@
 		<input type='text' class='userForm' id="username" name="username" placeholder="Input Username">
 		<button type="submit" class="btn btn-primary">Submit</button>
 	</form>
-	<h2 id='tester'>{{ username }}</h2>
+	<h2 id='tester'></h2>
 </div>
 
-{% endblock %}
+</body>
+</html>

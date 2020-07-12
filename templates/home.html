@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block content %}
+	
+	<h1 id="username"></h1>
+	<form id = 'create-channel' action="/home" method='POST'>
+		<input id= 'channel-name' type='text' name='channel-name' placeholder="Create a new channel">
+		<button id='create-channel-btn' class='btn btn-primary'> Create Channel </button>
+	</form>
+
+	{% if error %}
+	<p> {{ error }} </p>
+ 	{% endif %}
+
+	{% for c in channels %}
+	<li><a href='#'> {{ c }} </a></li>
+	{% endfor %}
+
+
+{% endblock %}
+

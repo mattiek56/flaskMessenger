@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+{% block head %}
+    <head>
+        <script>
+        document.addEventListener('DOMContentLoaded', () => {
+  
+            const username = localStorage.getItem("username")
+            console.log('the username is: ', username)
+            document.getElementById("username").innerHTML = username;
+
+        });
+		</script>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+      	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+      	
+    	<title>{% block title %}{% endblock %} - Mack </title>
+
+    	
+</head>
+{% endblock %}
+<body>
+
+{% block content %}
+{% endblock %}
+
+</body>
+</html>
