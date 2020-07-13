@@ -1,47 +1,95 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+       <link rel="stylesheet" href="static/index.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+
+        
         <script>
     
         document.addEventListener('DOMContentLoaded', () => {
-  
-            loginForm = document.getElementById('userform');
 
+        //connect to websocket (pulled from src5 code)
+        var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+
+        //load socket 
+
+        userForm = document.getElementById("userform");
+            
+         socket.on('connect', () => {
+            //upon connect giving the modal button emit activity 
+            //if the username is not in local storage display modal
             if (localStorage.getItem("username") != null) {
+
+
+                $(document).ready(function(){
+                    $("#myModal").modal('hide');
+                }); 
+
                 const username = localStorage.getItem("username");
-                console.log( "username in localStorage:", username);
-                loginForm.username.value = username;
-                window.location.href = "/home";
+                console.log('we have this username', username);
+                document.getElementById("display-username").innerHTML = "Welcome, " + username;
+                
+            }
+
+            else {
+
+                $(document).ready(function(){
+                    $("#myModal").modal('show');
+                }); 
+
+                userForm.addEventListener('submit', event => {
+                    //event.preventDefault();
+                    let username = userForm.username.value;
+                    localStorage.setItem("username", username);
+                    console.log("username is: ", username);
+                    userForm.submit();
+
+                    socket.emit("add user", {"username": username});
+
+                });
 
             }
 
-
-            loginForm.addEventListener('submit', event => {
-                event.preventDefault();
-                let username = loginForm.username.value;
-                localStorage.setItem("username", username);
-                 
-                loginForm.submit();
-
-                
+        
             });
 
         });
-</script>
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    </script>
 </head>
 
 <body>
 
 <div class='container'>
-	<h1>Input a username!</h1>
+    <!-- Create the modal for pop-up sign in -->
+    <div id='myModal' class='modal'>
+        <div class='modal-content'>
+            <form id="userform">
+                <h5 class='center-modal'> Welcome to Mack! </h5>
+                <p class='center-modal'> Please enter a username to begin... </p>
+                <div class="form-group">
+                <input type='text' class='form-control' placeholder='Enter a username here' name='username' data-set='username'>
+            </div>
+                <button id='submit-username' type='submit' class='btn btn-primary center-modal'>Submit</button>
+        </form>
+        </div>
+    </div>
+    <!-- creating the header to display username and such -->
+    <div class='header topbar'>
+        <h3 id='display-username'></h3>
+    </div>
 
-	<form id="userform" action = '/' method = 'post' class ='form user-form'>
-		<input type='text' class='userForm' id="username" name="username" placeholder="Input Username">
-		<button type="submit" class="btn btn-primary">Submit</button>
-	</form>
-	<h2 id='tester'></h2>
+    <div class='chat-body'>
+        <p> testing something </p>
+    </div>
+
 </div>
+
 
 </body>
 </html>
