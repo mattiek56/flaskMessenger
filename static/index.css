@@ -41,8 +41,80 @@ h5 {
 	margin-top: 0.5em;
 }
 
+.wrapper {
+	height: 100vh;
+}
 
+
+.chat-window {
+	height: 100%;
+}
 /* .center-modal {
 	text-align: center;
 } */
 
+
+/* styling for the header */
+
+.sidebar-menu {
+	position: fixed;
+	left:0;
+	background-color: #1D1E2C;
+	height: 100%;
+	max-height:100%;
+	color:#FFFFFF;
+}
+
+.sidebar-top {
+	list-style-type: none;
+	padding: 2em;
+	border-bottom: 1px solid #59656f;
+}
+
+#submit-channel {
+	border-radius: 10%;
+	background-color: #9c528b;
+	color: #FFFFFF;
+	border-style: none!important;
+	height: 30px;
+	width: 30px;
+}
+
+#sidebar-channels {
+	list-style-type: none;
+	padding:1em;
+}
+
+#sidebar-channels > li {
+	margin-bottom:0.2em;
+}
+.chat-section-title {
+	margin-left: 1em;
+}
+
+/* styling for chat body */
+
+.chat-type {
+	position: absolute;
+	bottom:2em;
+	margin-left: 2em;
+	width: 100%;
+}
+#new_message_form {
+	display: inline;
+}
+
+#new_message {
+	width:60%;
+}
+
+
+#channel-link > a{
+	color: white ;
+}
+
+
+#chat-message-log {
+	height: 100%;
+	background-color: grey;
+}

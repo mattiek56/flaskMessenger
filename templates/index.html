@@ -3,9 +3,8 @@
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-       <link rel="stylesheet" href="static/index.css">
+        <link rel="stylesheet" href="static/index.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-  
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
 
@@ -20,8 +19,40 @@
         //load socket 
 
         userForm = document.getElementById("userform");
+        channelForm = document.getElementById("channel-input");
+
+        function addChannelToList(socket, channel_name) {
+            //console.log('this is the channel name', channel_name)
+
+
+            const li = document.createElement('li');
+            li.innerHTML = '<a class="channel-link" href="#">#' + channel_name + '</a>';
+            document.querySelector("#sidebar-channels").append(li);
+           // setEntryEvent(socket,channel_name);
+         }
+
+        
+    //    function setEntryEvent(socket, channel_name) {
             
+          //  console.log('clicked on', channel_name);
+         //   var test = document.querySelectorAll("a");
+         //   for (t of test) {
+        //        t.addEventListener('submit', event => {
+        //        console.log('entered');
+        //    });
+           // channel_name.addEventListener("click", event => {
+             //   console.log('clicked on', channel_name);
+            //});
+            //localStorage.setItem("channel_name":channel_name);
+            //emit that we have are in this channel
+            
+       // };
+        //}//
+
+           
          socket.on('connect', () => {
+
+            
             //upon connect giving the modal button emit activity 
             //if the username is not in local storage display modal
             if (localStorage.getItem("username") != null) {
@@ -33,7 +64,7 @@
 
                 const username = localStorage.getItem("username");
                 console.log('we have this username', username);
-                document.getElementById("display-username").innerHTML = "Welcome, " + username;
+                socket.emit("add user", {"username": username});
                 
             }
 
@@ -54,10 +85,121 @@
 
                 });
 
-            }
+            };
+
+            //adding in a new channel 
+            
+            channelForm.addEventListener('submit', event => {
+
+            //function submitChannel() {
+                //console.log("testing testing");
+              
+                //document.querySelector("#testing").innerHTML = "Hello";
+                //const li = document.createElement('li');
+                //const channel = data.channel;
+                //console.log("the value is", channel);
+
+                const channel_name = channelForm.channel.value;
+                
+                //channelForm.submit();
+
+                socket.emit("add channel", {"channel_name": channel_name});
+                event.stopImmediatePropagation();
+                event.preventDefault();
+                //document.querySelector('#sidebar-channels').append(li);
+            });
+
 
         
             });
+
+            //loading of relevant data for the user
+         socket.on('user load', data => {
+            document.getElementById("display-username").innerHTML = "Welcome, " + data.username;
+            socket.emit("load data", {'username': data.username});
+
+         });
+
+
+//function to apply click function on all channels
+
+            function setEntryEvent(socket, channel_name) {
+
+            username = localStorage.getItem("username");
+
+            document.querySelectorAll('a').forEach(a => {
+                a.onclick = () => {
+                    console.log('this click worked for', channel_name , 'for' , username);
+                    localStorage.setItem('current_channel',channel_name);
+                    socket.emit('join channel', {'username':username,'channel_name':channel_name});
+                   // getChatMessageLog(channel_name);
+                };
+            });
+        }
+
+
+
+
+         socket.on('announce channel', data => {
+            console.log("entering the socket emit", data.channel_name)
+            const channel_name = data.channel_name;
+            addChannelToList(socket, channel_name);
+            setEntryEvent(socket, channel_name);
+         });
+
+        // socket.on('announce channels', data =>{
+          //  console.log('list of channels', data.list_channels)
+            //const list = data.list_channels;
+            //list.forEach(channel_name => {
+              //  addChannelToList(socket, channel_name);
+            //});
+         //});
+         
+         socket.on('available channels', data => {
+            //this will keep the entire list from repopulating and only display the 'newest'
+
+            list_channels = data.list_channels;
+             const channel_ul = document.querySelector('#sidebar-channels');
+                while (channel_ul.firstChild) {
+                    channel_ul.removeChild(channel_ul.firstChild);
+                };
+
+            for (channel_name of data.list_channels) {  
+                const li = document.createElement('li');
+                li.innerHTML = '<a class="channel-link" href="#">#' + channel_name + '</a>';
+                document.querySelector("#sidebar-channels").append(li);
+                setEntryEvent(socket, channel_name);
+                
+            };
+  });
+
+         socket.on("load messages", data => {
+            console.log('entered user joined function');
+            username = data.username;
+            channel_name = data.channel_name;
+            timestamp = data.timestamp;
+            messages = data.messages
+            for (message of messages) {
+                const li = document.createElement('li');
+                li.innerHTML = message;
+                document.querySelector("#messages").append(li);
+            };
+
+            //const li = document.createElement('li');
+            //li.innerHTML = username + 'has joined the' + channel_name + 'channel at' + timestamp;
+            //document.querySelector("#messages").append(li);
+
+            scroll_down();
+
+         });
+
+        function scroll_down() {
+
+            var total = document.getElementById("chat-message-log");
+            console.log(objDiv);
+            objDiv.scrollTop = objDiv.scrollHeight;
+    
+        }
 
         });
     </script>
@@ -79,16 +221,48 @@
         </form>
         </div>
     </div>
+
+    <div class='wrapper'>
     <!-- creating the header to display username and such -->
-    <div class='header topbar'>
-        <h3 id='display-username'></h3>
-    </div>
+        <div class='sidebar-menu'>
+                <ul class='sidebar-top'>
+                    
+                    <li class='sidebar-item'>
+                        <h3 id='display-username'></h3>
+                    </li>
+                    <li class='sidebar-item'>
+            <form id='channel-input'>
+                            <input type='text' class='channel-input' name='channel' data-set='channel' id='channel' placeholder="Add a channel">
+                            <button id='submit-channel' type='submit'>+</button>
+      </form>
+                    </li>
+                </ul>
+                <h6 class='chat-section-title'>Public Channels</h6>
+                <ul id='sidebar-channels'>
+                    <!--channels will go here -->        
+                </ul>
 
-    <div class='chat-body'>
-        <p> testing something </p>
-    </div>
 
-</div>
+            </div>
+
+            <div class = 'chat-window'>
+                <div id='chat-message-log' class='chat-log'>
+                    <!--- all of the messages will appear here -->
+                    <ul id='messages' class='log'>
+                        <!-- messages will go here -->
+                    </ul>
+                </div>
+                <div class ='chat-type'>
+                <form id="new_message_form">
+                <input class='chat-box' id='new_message' type ='text' placeholder="type your message here">
+                <button id='submit-message' class='chat-box' type='submit'>Send</button>
+
+            </form>
+        </div>
+            </div>
+        </div>  
+
+    </div>
 
 
 </body>
