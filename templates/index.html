@@ -20,6 +20,7 @@
 
         userForm = document.getElementById("userform");
         channelForm = document.getElementById("channel-input");
+        messageForm = document.getElementById("new_message_form");
 
         function addChannelToList(socket, channel_name) {
             //console.log('this is the channel name', channel_name)
@@ -109,6 +110,18 @@
                 //document.querySelector('#sidebar-channels').append(li);
             });
 
+            //add a message
+            //message to pull in timestamp and username
+            messageForm.addEventListener('submit', event => {
+                const message = messageForm.message.value;
+                const username =  localStorage.getItem("username");
+                const current_channel = localStorage.getItem("current_channel");
+                var timestamp = Date.now();
+                socket.emit("add message", {"message": message, "username": username, "channel_name": current_channel, "timestamp": timestamp});
+                event.stopImmediatePropagation();
+                event.preventDefault();
+            });
+
 
         
             });
@@ -175,8 +188,10 @@
 
          socket.on("load messages", data => {
             console.log('entered user joined function');
+
             username = data.username;
             channel_name = data.channel_name;
+            localStorage.setItem("current_channel", channel_name);
             timestamp = data.timestamp;
             messages = data.messages
             for (message of messages) {
@@ -189,17 +204,19 @@
             //li.innerHTML = username + 'has joined the' + channel_name + 'channel at' + timestamp;
             //document.querySelector("#messages").append(li);
 
-            scroll_down();
-
+            
          });
 
-        function scroll_down() {
+         socket.on("send message", data => {
+            console.log('entered the send message function');
+            username = data.username;
+            message = data.message;
+            timestamp = data.timestamp;
+            const li = document.createElement('li');
+            li.innerHTML = username + "says" + message + "at" + timestamp;
+            document.querySelector("#messages").append(li);
+         });
 
-            var total = document.getElementById("chat-message-log");
-            console.log(objDiv);
-            objDiv.scrollTop = objDiv.scrollHeight;
-    
-        }
 
         });
     </script>
@@ -254,10 +271,10 @@
                 </div>
                 <div class ='chat-type'>
                 <form id="new_message_form">
-                <input class='chat-box' id='new_message' type ='text' placeholder="type your message here">
-                <button id='submit-message' class='chat-box' type='submit'>Send</button>
+                    <input class='chat-box' name='message' id='new_message' type ='text' placeholder="type your message here">
+                    <button id='submit-message' class='chat-box' type='submit'>Send</button>
 
-            </form>
+                </form>
         </div>
             </div>
         </div>  

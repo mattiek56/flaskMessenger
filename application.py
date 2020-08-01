@@ -65,6 +65,22 @@ def join_channel(data):
 	list_messages = messages[channel_name]["messages"]
 	emit("load messages", {'username':username, "channel_name":channel_name, "timestamp":timestamp, "messages": list_messages}, broadcast=True)
 
+@socketio.on("add message")
+def add_message(data):
+	print('adding the message')
+	message = data['message']
+	username = data['username']
+	channel_name = data['channel_name']
+	timestamp = data['timestamp']
+	messages[channel_name]["messages"].append({
+		"messages":message,
+		"username": username,
+		"ts":timestamp
+	})
+
+
+	emit("send message", {'username':username, 'message': message, 'timestamp':timestamp}, broadcast=True)
+
 
 
 
