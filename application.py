@@ -65,8 +65,18 @@ def join_channel(data):
 	username = data['username']
 	timestamp = time.time()
 	messages[channel_name]["users"].add(username)
+	messages[channel_name]["messages"].append({
+		"messages": "user has joined the channel",
+		"username": username,
+		"ts": timestamp
+		})
 	messages_list = messages[channel_name]["messages"]
-	emit("user joined", {'username':username, "channel_name":channel_name, "messages": messages_list, "timestamp":timestamp}, broadcast=True)
+	join_message = messages_list[-1]["messages"]
+	if len(messages_list) > 100:
+		messages_list.pop(0)
+		print("popped off the first elem")
+	print(type(messages_list[1])) 
+	emit("user joined", {'username':username, "channel_name":channel_name, "messages": messages_list, "timestamp":timestamp, "join_message":join_message}, broadcast=True)
 
 @socketio.on("add message")
 def add_message(data):
@@ -80,7 +90,9 @@ def add_message(data):
 		"username": username,
 		"ts":timestamp
 	})
-
+	if len(messages[channel_name]["messages"]) > 100:
+		messages[channel_name]["messages"].pop(0)
+		print("popped off the first elem")
 	print(messages[channel_name])
 	emit("send message", {'username':username, 'message': message, 'timestamp':timestamp, 'channel_name':channel_name}, broadcast=True)
 

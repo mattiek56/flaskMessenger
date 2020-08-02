@@ -57,22 +57,45 @@
 
 
          function addMessage(username, channel_name, timestamp, data) {
+            message_display = document.querySelector("#messages");
+            //console.log("the add message function")
+            //console.log;
             const li = document.createElement('li');
-            li.innerHTML = data.message;
-            document.querySelector("#messages").append(li);
+            li.innerHTML = data.messages;
+            message_display.appendChild(li);
+
+            updateMessagesScroll();
 
          }
 
-         function loadMessages(channel_name, data) {
-            
+         function loadMessages(socket, channel_name, data) {
+            removeMessages();
+            //dictionary = data.messages;
+            //console.log(dictionary);
             console.log('entered loadMessages function');
-            for (message of data.messages[channel_name]) {
-                addMessage(data.username, channel_name, data.timestamp, data);
-
+            for (messages of data["messages"]) {
+               // console.log("entered the for loop");
+                console.log(messages.messages);
+                addMessage(messages.username, channel_name, messages.timestamp, {"messages": messages.messages});
+                updateMessagesScroll();
             }
 
-         }
+         } 
         
+
+        function updateMessagesScroll(){
+            var element = document.querySelector("#chat-message-log");
+            element.scrollTop = element.scrollHeight;
+            }
+         //this function is how you can keep the messages from other channels from appearing in the newly loaded channel
+        function removeMessages() {
+            // Remove all messages
+            var message_display = document.querySelector("#messages");
+            message_display.innerHTML = '';
+           /* while (message_display.firstChild) {
+            message_display.removeChild(message_display.firstChild);
+            }
+            } */ }
 
            
          socket.on('connect', () => {
@@ -191,9 +214,10 @@
             channel_name = data.channel_name;
             //localStorage.setItem("current_channel", channel_name);
             timestamp = data.timestamp;
+            join_message = data.join_message;
+            //console.log(join_message);
 
-            addMessage(username, channel_name, timestamp, {"message": `${username} has joined ${channel_name}`});
-
+            addMessage(username, channel_name, timestamp, {"messages": join_message});
             loadMessages(socket, channel_name, data);
             
          });
@@ -203,7 +227,7 @@
             username = data.username;
             message = data.message;
             timestamp = data.timestamp;
-            addMessage(username, channel_name, timestamp, data);
+            addMessage(username, channel_name, timestamp, {"messages": message});
             
          });
 
@@ -252,7 +276,7 @@
 
             </div>
 
-            <div class = 'chat-window'>
+            <div class = 'chat-window' id='chat-window-scroll'>
                 <div id='chat-message-log' class='chat-log'>
                     <!--- all of the messages will appear here -->
                     <ul id='messages' class='log'>
