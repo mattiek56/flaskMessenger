@@ -37,33 +37,36 @@ def add_channel(data):
 	channel_name = data["channel_name"]
 	if channel_name not in messages:
 		messages[channel_name] = {
-			"messages":["initialize messages"], 
+			"messages":[], 
 			"users":set()}
-		emit("announce channel", {"channel_name" : channel_name}, broadcast=True)
+		#print(type(messages[channel_name]["messages"]))	
+		#print(type(messages))
+		emit("available channels", {"list_channels": list(messages), "messages": messages[channel_name]["messages"]}, broadcast=True)
 		#print(messages[channel_name])
 		#print(messages)
 		#print(channel)
 		#channels.append(channel)
 	#messages[channel] = []
-	print(messages)
+	print(type(messages[channel_name]["messages"]))
 	#emit("announce channel", {"channel_name" : channel_name}, broadcast=True)
 
 @socketio.on("load data")
 def load_data(data):
 	list_channels = list(messages.keys())
+	
 	print(list_channels)
-	emit("available channels", {"list_channels":list_channels}, broadcast=True)
+	emit("available channels", {"list_channels":list_channels})
 
 @socketio.on('join channel')
 def join_channel(data):
 	print('entered the function')
 	channel_name = data['channel_name']
+	print(channel_name)
 	username = data['username']
 	timestamp = time.time()
 	messages[channel_name]["users"].add(username)
-	print(messages[channel_name])
-	list_messages = messages[channel_name]["messages"]
-	emit("load messages", {'username':username, "channel_name":channel_name, "timestamp":timestamp, "messages": list_messages}, broadcast=True)
+	messages_list = messages[channel_name]["messages"]
+	emit("user joined", {'username':username, "channel_name":channel_name, "messages": messages_list, "timestamp":timestamp}, broadcast=True)
 
 @socketio.on("add message")
 def add_message(data):
@@ -78,8 +81,8 @@ def add_message(data):
 		"ts":timestamp
 	})
 
-
-	emit("send message", {'username':username, 'message': message, 'timestamp':timestamp}, broadcast=True)
+	print(messages[channel_name])
+	emit("send message", {'username':username, 'message': message, 'timestamp':timestamp, 'channel_name':channel_name}, broadcast=True)
 
 
 

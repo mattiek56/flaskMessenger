@@ -22,33 +22,57 @@
         channelForm = document.getElementById("channel-input");
         messageForm = document.getElementById("new_message_form");
 
+        /*function setEntryEvent(socket, channel_name) {
+
+            username = localStorage.getItem("username");
+            console.log('entering the setEntry function for', channel_name);
+            document.querySelectorAll('a').forEach(a => {
+                a.onclick = () => {
+                    console.log('this click worked for', channel_name , 'for' , username);
+                    //const channel_name = data.channel_name;
+                    socket.emit('join channel', {'username':username,'channel_name':channel_name});
+                    //localStorage.setItem('current_channel',channel_name);
+                    //loadMessages(channel_name);
+                   // getChatMessageLog(channel_name);
+                };
+            });
+        }*/
+
         function addChannelToList(socket, channel_name) {
-            //console.log('this is the channel name', channel_name)
-
-
+            console.log('this is the channel name', channel_name)
+            username = localStorage.getItem("username");
             const li = document.createElement('li');
+            //const channel_name = data.channel_name;
+            li.chn;
+            li.onclick = function() {
+                console.log('this click worked for', channel_name);
+                socket.emit('join channel', {'username':username,'channel_name':channel_name});
+                localStorage.setItem("current_channel", channel_name);
+            }
+
             li.innerHTML = '<a class="channel-link" href="#">#' + channel_name + '</a>';
             document.querySelector("#sidebar-channels").append(li);
-           // setEntryEvent(socket,channel_name);
+            
+         } 
+
+
+         function addMessage(username, channel_name, timestamp, data) {
+            const li = document.createElement('li');
+            li.innerHTML = data.message;
+            document.querySelector("#messages").append(li);
+
          }
 
+         function loadMessages(channel_name, data) {
+            
+            console.log('entered loadMessages function');
+            for (message of data.messages[channel_name]) {
+                addMessage(data.username, channel_name, data.timestamp, data);
+
+            }
+
+         }
         
-    //    function setEntryEvent(socket, channel_name) {
-            
-          //  console.log('clicked on', channel_name);
-         //   var test = document.querySelectorAll("a");
-         //   for (t of test) {
-        //        t.addEventListener('submit', event => {
-        //        console.log('entered');
-        //    });
-           // channel_name.addEventListener("click", event => {
-             //   console.log('clicked on', channel_name);
-            //});
-            //localStorage.setItem("channel_name":channel_name);
-            //emit that we have are in this channel
-            
-       // };
-        //}//
 
            
          socket.on('connect', () => {
@@ -92,19 +116,14 @@
             
             channelForm.addEventListener('submit', event => {
 
-            //function submitChannel() {
-                //console.log("testing testing");
-              
-                //document.querySelector("#testing").innerHTML = "Hello";
-                //const li = document.createElement('li');
-                //const channel = data.channel;
-                //console.log("the value is", channel);
-
+        
+                console.log('clicked the add button')
                 const channel_name = channelForm.channel.value;
                 
                 //channelForm.submit();
 
                 socket.emit("add channel", {"channel_name": channel_name});
+
                 event.stopImmediatePropagation();
                 event.preventDefault();
                 //document.querySelector('#sidebar-channels').append(li);
@@ -136,74 +155,46 @@
 
 //function to apply click function on all channels
 
-            function setEntryEvent(socket, channel_name) {
 
-            username = localStorage.getItem("username");
-
-            document.querySelectorAll('a').forEach(a => {
-                a.onclick = () => {
-                    console.log('this click worked for', channel_name , 'for' , username);
-                    localStorage.setItem('current_channel',channel_name);
-                    socket.emit('join channel', {'username':username,'channel_name':channel_name});
-                   // getChatMessageLog(channel_name);
-                };
-            });
-        }
-
-
-
-
-         socket.on('announce channel', data => {
+      /*   socket.on('announce channel', data => {
             console.log("entering the socket emit", data.channel_name)
-            const channel_name = data.channel_name;
+            var channel_name = data.channel_name;
             addChannelToList(socket, channel_name);
-            setEntryEvent(socket, channel_name);
-         });
+            //setEntryEvent(socket, channel_name);
+         }); */
 
-        // socket.on('announce channels', data =>{
-          //  console.log('list of channels', data.list_channels)
-            //const list = data.list_channels;
-            //list.forEach(channel_name => {
-              //  addChannelToList(socket, channel_name);
-            //});
-         //});
          
          socket.on('available channels', data => {
             //this will keep the entire list from repopulating and only display the 'newest'
-
+            console.log('entered the available channels socket')
             list_channels = data.list_channels;
-             const channel_ul = document.querySelector('#sidebar-channels');
-                while (channel_ul.firstChild) {
+            const channel_ul = document.querySelector('#sidebar-channels');
+
+            while (channel_ul.firstChild) {
                     channel_ul.removeChild(channel_ul.firstChild);
                 };
 
             for (channel_name of data.list_channels) {  
-                const li = document.createElement('li');
-                li.innerHTML = '<a class="channel-link" href="#">#' + channel_name + '</a>';
-                document.querySelector("#sidebar-channels").append(li);
-                setEntryEvent(socket, channel_name);
-                
-            };
-  });
+                addChannelToList(socket, channel_name);
+            }
 
-         socket.on("load messages", data => {
+
+            
+            
+
+            }); //end of socket.on(available channels)
+
+         socket.on("user joined", data => {
             console.log('entered user joined function');
 
             username = data.username;
             channel_name = data.channel_name;
-            localStorage.setItem("current_channel", channel_name);
+            //localStorage.setItem("current_channel", channel_name);
             timestamp = data.timestamp;
-            messages = data.messages
-            for (message of messages) {
-                const li = document.createElement('li');
-                li.innerHTML = message;
-                document.querySelector("#messages").append(li);
-            };
 
-            //const li = document.createElement('li');
-            //li.innerHTML = username + 'has joined the' + channel_name + 'channel at' + timestamp;
-            //document.querySelector("#messages").append(li);
+            addMessage(username, channel_name, timestamp, {"message": `${username} has joined ${channel_name}`});
 
+            loadMessages(socket, channel_name, data);
             
          });
 
@@ -212,9 +203,8 @@
             username = data.username;
             message = data.message;
             timestamp = data.timestamp;
-            const li = document.createElement('li');
-            li.innerHTML = username + "says" + message + "at" + timestamp;
-            document.querySelector("#messages").append(li);
+            addMessage(username, channel_name, timestamp, data);
+            
          });
 
 
