@@ -34,14 +34,16 @@ def add_user(data):
 
 @socketio.on("add channel")
 def add_channel(data):
+	print("entered add channel function")
 	channel_name = data["channel_name"]
+	created_by = data["username"]
 	if channel_name not in messages:
 		messages[channel_name] = {
 			"messages":[], 
 			"users":set()}
 		#print(type(messages[channel_name]["messages"]))	
 		#print(type(messages))
-		emit("available channels", {"list_channels": list(messages), "messages": messages[channel_name]["messages"]}, broadcast=True)
+		emit("available channels", {"list_channels": list(messages), "messages": messages[channel_name]["messages"], "username":created_by}, broadcast=True)
 		#print(messages[channel_name])
 		#print(messages)
 		#print(channel)
@@ -53,9 +55,9 @@ def add_channel(data):
 @socketio.on("load data")
 def load_data(data):
 	list_channels = list(messages.keys())
-	
+	username = data["username"]
 	print(list_channels)
-	emit("available channels", {"list_channels":list_channels})
+	emit("available channels", {"list_channels":list_channels, "username":username})
 
 @socketio.on('join channel')
 def join_channel(data):
@@ -76,7 +78,7 @@ def join_channel(data):
 		messages_list.pop(0)
 		print("popped off the first elem")
 	print(type(messages_list[1])) 
-	emit("user joined", {'username':username, "channel_name":channel_name, "messages": messages_list, "timestamp":timestamp, "join_message":join_message}, broadcast=True)
+	emit("user joined", {'username':username, "channel_name":channel_name, "messages": messages_list, "timestamp":timestamp, "join_message":join_message})
 
 @socketio.on("add message")
 def add_message(data):

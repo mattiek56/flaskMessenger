@@ -3,6 +3,11 @@
 
 /* styling for the modal login */
 
+body {
+	overflow-x: hidden;
+    overflow-y: hidden;
+}
+
 .modal-backdrop {
 	background-color: #59656F!important;
 }
@@ -48,6 +53,8 @@ h5 {
 
 .chat-window {
 	height: 100%;
+	width: 100vw;
+	margin-left: 2rem;
 }
 /* .center-modal {
 	text-align: center;
@@ -97,15 +104,19 @@ h5 {
 .chat-type {
 	position: absolute;
 	bottom:2em;
-	margin-left: 2em;
+	margin-left: 6rem;
 	width: 100%;
 }
+
+
 #new_message_form {
-	display: inline;
+	display: flex;
 }
 
 #new_message {
 	width:60%;
+	resize: none;
+	height:2.5rem;
 }
 
 
@@ -115,6 +126,41 @@ h5 {
 
 
 #chat-message-log {
-	height: 100%;
-	background-color: grey;
+	height: 90%;
+	background-color: white;
+	overflow: auto;
 }
+
+
+
+#messages {
+	margin-left: 2%;
+	list-style: none;
+	padding-top: 1em;
+}
+
+.message {
+	padding: 0.75rem;
+	width: 65%;
+}
+
+.message_details {
+	display: inline-flex;
+}
+
+
+.username_message {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.timestamp_message {
+	margin-top: 0;
+	margin-bottom: 0;
+	padding-left: 1rem;
+}
+
+
+
+
+

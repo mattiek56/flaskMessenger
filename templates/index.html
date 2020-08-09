@@ -40,12 +40,13 @@
 
         function addChannelToList(socket, channel_name) {
             console.log('this is the channel name', channel_name)
-            username = localStorage.getItem("username");
+            
             const li = document.createElement('li');
             //const channel_name = data.channel_name;
             li.chn;
             li.onclick = function() {
-                console.log('this click worked for', channel_name);
+                //console.log('this click worked for', channel_name);
+                username = localStorage.getItem("username");
                 socket.emit('join channel', {'username':username,'channel_name':channel_name});
                 localStorage.setItem("current_channel", channel_name);
             }
@@ -61,7 +62,12 @@
             //console.log("the add message function")
             //console.log;
             const li = document.createElement('li');
-            li.innerHTML = data.messages;
+            li.classList.add("message");
+            dis_username = username;
+            
+            dis_timestamp = timestamp;
+
+            li.innerHTML = '<div class="message_details">' + '<h5 class="username_message">' + dis_username + '</h5>' + '<p class="timestamp_message">' + dis_timestamp + '</p>' + '</div>' + '<div class="message_body">' + data.messages + '</div>';
             message_display.appendChild(li);
 
             updateMessagesScroll();
@@ -69,19 +75,45 @@
          }
 
          function loadMessages(socket, channel_name, data) {
+            console.log("entered the load messages function 1");
+           
             removeMessages();
             //dictionary = data.messages;
             //console.log(dictionary);
-            console.log('entered loadMessages function');
+            //console.log('entered loadMessages function');
             for (messages of data["messages"]) {
                // console.log("entered the for loop");
-                console.log(messages.messages);
-                addMessage(messages.username, channel_name, messages.timestamp, {"messages": messages.messages});
+                let timestamp = convertTimestamp(messages.ts);
+                addMessage(messages.username, channel_name, timestamp, {"messages": messages.messages});
                 updateMessagesScroll();
             }
 
          } 
         
+        function convertTimestamp(timestamp) {
+
+            let ts = timestamp;
+
+            var date = new Date(ts * 1000);
+    // Hours part from the timestamp
+            var hours = date.getHours();
+        // Minutes part from the timestamp
+            var minutes = "0" + date.getMinutes();
+        // Seconds part from the timestamp
+           // var seconds = "0" + date.getSeconds();
+
+           if (hours>12) {
+                var time_teller = "PM";
+           }
+
+           else {
+                var time_teller = 'AM';
+           };
+
+
+            var formattedTime = hours + ':' + minutes.substr(-2) + time_teller;
+            return formattedTime;
+        }
 
         function updateMessagesScroll(){
             var element = document.querySelector("#chat-message-log");
@@ -112,7 +144,8 @@
 
                 const username = localStorage.getItem("username");
                 console.log('we have this username', username);
-                socket.emit("add user", {"username": username});
+                socket.emit("load data", {"username": username});
+          
                 
             }
 
@@ -145,7 +178,7 @@
                 
                 //channelForm.submit();
 
-                socket.emit("add channel", {"channel_name": channel_name});
+                socket.emit("add channel", {"channel_name": channel_name, "username": localStorage.getItem("username")});
 
                 event.stopImmediatePropagation();
                 event.preventDefault();
@@ -166,11 +199,13 @@
 
 
         
-            });
+            }); //end of connect
 
             //loading of relevant data for the user
          socket.on('user load', data => {
+
             document.getElementById("display-username").innerHTML = "Welcome, " + data.username;
+
             socket.emit("load data", {'username': data.username});
 
          });
@@ -189,7 +224,8 @@
          
          socket.on('available channels', data => {
             //this will keep the entire list from repopulating and only display the 'newest'
-            console.log('entered the available channels socket')
+            document.getElementById("display-username").innerHTML = "Welcome, " + data.username;
+            console.log('entered the available channels socket');
             list_channels = data.list_channels;
             const channel_ul = document.querySelector('#sidebar-channels');
 
@@ -200,6 +236,21 @@
             for (channel_name of data.list_channels) {  
                 addChannelToList(socket, channel_name);
             }
+
+
+            if (localStorage.getItem("current_channel") != null) {
+                    current_channel = localStorage.getItem("current_channel");
+                    console.log("it is true that this channel was logged");
+                    username = localStorage.getItem("username");
+                    socket.emit("join channel", {"username": username, "channel_name": current_channel})
+                }
+
+            else {
+
+                console.log("we did not have this channel before");
+                    
+                }
+
 
 
             
@@ -241,7 +292,7 @@
 <div class='container'>
     <!-- Create the modal for pop-up sign in -->
     <div id='myModal' class='modal'>
-        <div class='modal-content'>
+        <div class="modal-content">
             <form id="userform">
                 <h5 class='center-modal'> Welcome to Mack! </h5>
                 <p class='center-modal'> Please enter a username to begin... </p>
@@ -249,51 +300,54 @@
                 <input type='text' class='form-control' placeholder='Enter a username here' name='username' data-set='username'>
             </div>
                 <button id='submit-username' type='submit' class='btn btn-primary center-modal'>Submit</button>
-        </form>
+            </form>
         </div>
     </div>
 
     <div class='wrapper'>
     <!-- creating the header to display username and such -->
         <div class='sidebar-menu'>
-                <ul class='sidebar-top'>
+            <ul class='sidebar-top'>
                     
-                    <li class='sidebar-item'>
-                        <h3 id='display-username'></h3>
-                    </li>
-                    <li class='sidebar-item'>
-            <form id='channel-input'>
-                            <input type='text' class='channel-input' name='channel' data-set='channel' id='channel' placeholder="Add a channel">
-                            <button id='submit-channel' type='submit'>+</button>
-      </form>
-                    </li>
-                </ul>
-                <h6 class='chat-section-title'>Public Channels</h6>
-                <ul id='sidebar-channels'>
+            <li class='sidebar-item'>
+                <h3 id='display-username'></h3>
+            </li>
+            <li class='sidebar-item'>
+                <form id='channel-input'>
+                    <input type='text' class='channel-input' name='channel' data-set='channel' id='channel' placeholder="Add a channel">
+                    <button id='submit-channel' type='submit'>+</button>
+                </form>
+            </li>
+            </ul>
+
+            <h6 class='chat-section-title'>Public Channels</h6>
+            <ul id='sidebar-channels'>
                     <!--channels will go here -->        
-                </ul>
+            </ul>
+        </div>
 
 
-            </div>
-
-            <div class = 'chat-window' id='chat-window-scroll'>
+        <div class = 'chat-window' id='chat-window-scroll'>
                 <div id='chat-message-log' class='chat-log'>
                     <!--- all of the messages will appear here -->
                     <ul id='messages' class='log'>
                         <!-- messages will go here -->
                     </ul>
                 </div>
-                <div class ='chat-type'>
+
+        </div>
+
+
+        <div class ='chat-type'>
                 <form id="new_message_form">
-                    <input class='chat-box' name='message' id='new_message' type ='text' placeholder="type your message here">
+                    <textarea class='chat-box' name='message' id='new_message' type ='text' placeholder="type your message here"></textarea>
                     <button id='submit-message' class='chat-box' type='submit'>Send</button>
 
-                </form>
+            </form>
         </div>
-            </div>
-        </div>  
+    </div>  
 
-    </div>
+</div>
 
 
 </body>
