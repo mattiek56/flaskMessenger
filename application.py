@@ -32,6 +32,14 @@ def add_user(data):
 		users.append(username)
 	emit('user load', {"username": username})
 
+@socketio.on("reload user")
+def reload_user(data):
+	username = data["username"]
+	channel_name = data["channel_name"]
+	list_channels = list(messages.keys())
+	emit("rejoin", {"list_channels":list_channels, "username": username, "channel_name":channel_name})
+
+
 @socketio.on("add channel")
 def add_channel(data):
 	print("entered add channel function")
@@ -49,7 +57,7 @@ def add_channel(data):
 		#print(channel)
 		#channels.append(channel)
 	#messages[channel] = []
-	print(type(messages[channel_name]["messages"]))
+	
 	#emit("announce channel", {"channel_name" : channel_name}, broadcast=True)
 
 @socketio.on("load data")
@@ -77,7 +85,7 @@ def join_channel(data):
 	if len(messages_list) > 100:
 		messages_list.pop(0)
 		print("popped off the first elem")
-	print(type(messages_list[1])) 
+	 
 	emit("user joined", {'username':username, "channel_name":channel_name, "messages": messages_list, "timestamp":timestamp, "join_message":join_message})
 
 @socketio.on("add message")

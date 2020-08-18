@@ -4,6 +4,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link rel="stylesheet" href="static/index.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
@@ -14,6 +15,24 @@
         document.addEventListener('DOMContentLoaded', () => {
 
         //connect to websocket (pulled from src5 code)
+
+    
+
+        document.getElementById("closebtn").addEventListener('click', event => {
+            document.getElementById("mySidebar").style.width = "0";
+            document.body.style.backgroundColor = "white";
+
+        });    
+
+        document.getElementById("openbtn").addEventListener('click', event => {
+            document.getElementById('mySidebar').style.width = "unset";
+            document.getElementById('mySidebar').style.backgroundColor = '#1D1E2C';
+
+        });
+
+    
+       
+
         var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
         //load socket 
@@ -38,6 +57,11 @@
             });
         }*/
 
+
+
+
+
+
         function addChannelToList(socket, channel_name) {
             console.log('this is the channel name', channel_name)
             
@@ -47,8 +71,10 @@
             li.onclick = function() {
                 //console.log('this click worked for', channel_name);
                 username = localStorage.getItem("username");
+                console.log("clicked the channel!")
                 socket.emit('join channel', {'username':username,'channel_name':channel_name});
                 localStorage.setItem("current_channel", channel_name);
+
             }
 
             li.innerHTML = '<a class="channel-link" href="#">#' + channel_name + '</a>';
@@ -61,13 +87,53 @@
             message_display = document.querySelector("#messages");
             //console.log("the add message function")
             //console.log;
-            const li = document.createElement('li');
-            li.classList.add("message");
-            dis_username = username;
-            
-            dis_timestamp = timestamp;
 
-            li.innerHTML = '<div class="message_details">' + '<h5 class="username_message">' + dis_username + '</h5>' + '<p class="timestamp_message">' + dis_timestamp + '</p>' + '</div>' + '<div class="message_body">' + data.messages + '</div>';
+            length_messages = document.getElementsByClassName("message").length;
+            const li = document.createElement('li');
+            if (length_messages % 2 == 0) {
+            li.classList.add("message");
+            li.classList.add("even");
+
+            }
+
+            else {
+                li.classList.add("message");
+                li.classList.add("odd");
+            };
+
+            dis_username = username;
+            dis_timestamp = timestamp;
+            
+
+            li.innerHTML = '<div class="message_details">' + '<h5 class="username_message">' + dis_username + '</h5>' + '<p id ="timestamp_message" class="timestamp_message">' + dis_timestamp + '</p>' + '<i id="delete" class="delete fa fa-trash-o"></i>' + '</div>' + '<div class="message_body">' + data.messages + '</div>';
+
+            if (localStorage.getItem("username") == username) {
+                li.onmouseover = function () {
+                   li.style.background = "#d7cdcc";
+                   li.getElementsByClassName("delete")[0].style.visibility = "visible";
+                   
+                  
+                }
+
+                li.onmouseout = function () {
+                    li.style.background = "white";
+                    li.getElementsByClassName("delete")[0].style.visibility = "hidden";
+                }
+            }
+
+            if (localStorage.getItem("username") == username) {
+                li.ontouchstart = function () {
+                    li.style.background="d7cdcc";
+                    i.getElementsByClassName("delete")[0].style.visibility = "visible";
+                }
+
+                li.ontouchend = function () {
+                    li.style.background = "white";
+                    li.getElementsByClassName("delete")[0].style.visibility = "hidden";
+                }    
+
+                
+            }
             message_display.appendChild(li);
 
             updateMessagesScroll();
@@ -92,26 +158,11 @@
         
         function convertTimestamp(timestamp) {
 
-            let ts = timestamp;
+            const ts = timestamp;
+            const milli_ts = 1000* ts;
+            const date_obj = new Date(milli_ts);
+            const formattedTime = date_obj.toLocaleString();
 
-            var date = new Date(ts * 1000);
-    // Hours part from the timestamp
-            var hours = date.getHours();
-        // Minutes part from the timestamp
-            var minutes = "0" + date.getMinutes();
-        // Seconds part from the timestamp
-           // var seconds = "0" + date.getSeconds();
-
-           if (hours>12) {
-                var time_teller = "PM";
-           }
-
-           else {
-                var time_teller = 'AM';
-           };
-
-
-            var formattedTime = hours + ':' + minutes.substr(-2) + time_teller;
             return formattedTime;
         }
 
@@ -144,7 +195,15 @@
 
                 const username = localStorage.getItem("username");
                 console.log('we have this username', username);
-                socket.emit("load data", {"username": username});
+
+                if (localStorage.getItem("current_channel") != null) {
+                    console.log("this is the username", username);
+                    socket.emit('reload user', {'username':username,'channel_name':localStorage.getItem("current_channel")});
+                }
+
+                else {
+                    socket.emit("load data", {"username": username});
+                };
           
                 
             }
@@ -211,6 +270,38 @@
          });
 
 
+         socket.on('rejoin', data =>{
+
+                        document.getElementById("display-username").innerHTML = "Welcome, " + data.username;
+            console.log('entered the available channels socket');
+            list_channels = data.list_channels;
+            const channel_ul = document.querySelector('#sidebar-channels');
+
+            while (channel_ul.firstChild) {
+                    channel_ul.removeChild(channel_ul.firstChild);
+                };
+
+            for (channel_name of data.list_channels) {  
+                addChannelToList(socket, channel_name);
+            }
+
+
+           if (localStorage.getItem("current_channel") != null) {
+                    current_channel = localStorage.getItem("current_channel");
+                    console.log("it is true that this channel was logged");
+                    username = localStorage.getItem("username");
+                    socket.emit("join channel", {"username": username, "channel_name": current_channel})
+                }
+
+            else {
+
+                console.log("we did not have this channel before");
+                    
+                };
+
+         });
+
+
 //function to apply click function on all channels
 
 
@@ -238,7 +329,7 @@
             }
 
 
-            if (localStorage.getItem("current_channel") != null) {
+         /*   if (localStorage.getItem("current_channel") != null) {
                     current_channel = localStorage.getItem("current_channel");
                     console.log("it is true that this channel was logged");
                     username = localStorage.getItem("username");
@@ -250,7 +341,7 @@
                 console.log("we did not have this channel before");
                     
                 }
-
+*/
 
 
             
@@ -266,6 +357,7 @@
             //localStorage.setItem("current_channel", channel_name);
             timestamp = data.timestamp;
             join_message = data.join_message;
+
             //console.log(join_message);
 
             addMessage(username, channel_name, timestamp, {"messages": join_message});
@@ -289,7 +381,8 @@
 
 <body>
 
-<div class='container'>
+<div class="container">
+
     <!-- Create the modal for pop-up sign in -->
     <div id='myModal' class='modal'>
         <div class="modal-content">
@@ -304,26 +397,41 @@
         </div>
     </div>
 
-    <div class='wrapper'>
+    
+
+    <div class="wrapper">
     <!-- creating the header to display username and such -->
-        <div class='sidebar-menu'>
+        <div id="mySidebar" class='sidebar-menu'>
+            <div class='topbar'>
+            <a href= 'javascript:void(0)' id='closebtn' class='closebtn fa fa-angle-double-left' ></a>
             <ul class='sidebar-top'>
-                    
-            <li class='sidebar-item'>
+                 
+            <li class='sidebar-item' id="username_li">
+            <div class='standard_div'>
                 <h3 id='display-username'></h3>
+            </div>
             </li>
             <li class='sidebar-item'>
+            <div class='standard_div'>
                 <form id='channel-input'>
                     <input type='text' class='channel-input' name='channel' data-set='channel' id='channel' placeholder="Add a channel">
                     <button id='submit-channel' type='submit'>+</button>
                 </form>
+            </div>
             </li>
             </ul>
+        </div>
 
             <h6 class='chat-section-title'>Public Channels</h6>
             <ul id='sidebar-channels'>
                     <!--channels will go here -->        
             </ul>
+        </div>
+
+
+<div class='test-container'>
+        <div id ='menuBar'>
+            <span id='openbtn'>&#9776;</span>
         </div>
 
 
@@ -336,16 +444,18 @@
                 </div>
 
         </div>
+    </div>
 
 
         <div class ='chat-type'>
                 <form id="new_message_form">
-                    <textarea class='chat-box' name='message' id='new_message' type ='text' placeholder="type your message here"></textarea>
-                    <button id='submit-message' class='chat-box' type='submit'>Send</button>
+                    <textarea class='chat-box' name='message' id='new_message' type ='text' placeholder="Type your message here"></textarea>
+                    <button id='submit-message' class='chat-box fa fa-send-o' type='submit'></button>
 
             </form>
         </div>
-    </div>  
+    </div>
+
 
 </div>
 

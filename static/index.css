@@ -41,6 +41,11 @@ body {
 	border-color: #1d1e2c;
 }
 
+#display-username {
+	overflow-wrap: break-word;
+	
+}
+
 h5 {
 	margin-block-end: 0px;
 	margin-top: 0.5em;
@@ -52,7 +57,7 @@ h5 {
 
 
 .chat-window {
-	height: 100%;
+	height: 100vh;
 	width: 100vw;
 	margin-left: 2rem;
 }
@@ -63,14 +68,35 @@ h5 {
 
 /* styling for the header */
 
-.sidebar-menu {
+
+
+#closebtn {
+	display: none;
+}
+
+.topbar {
+	margin-top: 1rem;
+}
+
+#menuBar {
+	display: none;
+}
+
+
+/* this needs to be adjusted to reflect media size */
+
+#mySidebar {
 	position: fixed;
 	left:0;
 	background-color: #1D1E2C;
 	height: 100%;
 	max-height:100%;
 	color:#FFFFFF;
+	width: unset;
+	
 }
+
+
 
 .sidebar-top {
 	list-style-type: none;
@@ -78,26 +104,38 @@ h5 {
 	border-bottom: 1px solid #59656f;
 }
 
+.sidebar-item {
+	width: 100%;
+}
+
+.channel-input {
+	width: 85%;
+	height: 2.25em;
+}
+
 #submit-channel {
 	border-radius: 10%;
 	background-color: #9c528b;
 	color: #FFFFFF;
 	border-style: none!important;
-	height: 30px;
-	width: 30px;
+	height: 2.25em;
+	width: 2.25em;
 }
 
 #sidebar-channels {
 	list-style-type: none;
 	padding:1em;
+	margin-left: 1.5em;
+	font-size: larger;
 }
 
 #sidebar-channels > li {
 	margin-bottom:0.2em;
 }
 .chat-section-title {
-	margin-left: 1em;
-}
+	margin-left: 1.5em;
+	font-size: x-large;
+	 }
 
 /* styling for chat body */
 
@@ -106,8 +144,18 @@ h5 {
 	bottom:2em;
 	margin-left: 6rem;
 	width: 100%;
+	background-color: white;
+	border-top: 2px solid #59656f;
 }
-
+#submit-message {
+border-radius: 10%;
+	background-color: #9c528b;
+	color: #FFFFFF;
+	border-style: none!important;
+	height: 2.5rem;
+	width: 2.5rem;
+	
+}
 
 #new_message_form {
 	display: flex;
@@ -132,7 +180,6 @@ h5 {
 }
 
 
-
 #messages {
 	margin-left: 2%;
 	list-style: none;
@@ -144,9 +191,23 @@ h5 {
 	width: 65%;
 }
 
+.delete {
+	visibility: hidden;
+}
+
+
+.odd {
+	border-bottom: 1px solid #59656f;
+}
+
+.even {
+	border-bottom: 1px solid #59656f;
+}
+
 .message_details {
 	display: inline-flex;
 }
+
 
 
 .username_message {
@@ -161,6 +222,93 @@ h5 {
 }
 
 
+@media only screen 
+  and (min-device-width: 414px) 
+  and (max-device-width: 736px) 
+  and (-webkit-min-device-pixel-ratio: 3) { 
+
+  	.message {
+  		width: 100%;
+  	}
+
+  	.test-container {
+  		display: grid;
+  	}
+
+  	.chat-window {
+  		margin-left: 0;
+  	}
+
+  	#closebtn {
+  		display: block;
+		float:right;
+		margin-right: 1rem;
+		color:white;
+		font-size: 20px;
+	}
+	#openbtn {
+		padding-left: 10px;
+		color: white;
+		background-color: #1D1E2C;
+	}
+
+	#menuBar {
+		display: contents;
+		float: left;
+		font-size: 35px;
+		cursor:pointer;
+		padding-left: 10px;
+
+	}
+
+  	#mySidebar {
+
+	position: fixed;
+	left:0;
+	background-color: #1D1E2C;
+	height: 100%;
+	max-height:100%;
+	color:#FFFFFF;
+	width: 0;
+	z-index: 1;
+	top:0;
+	overflow-x: hidden;
+	
+}
+
+	.container {
+		padding-left: 0px!important;
+	}
+
+	.chat-type {
+		bottom:0;
+		margin-left: 0;
+		height: 100px;
+		padding-top: 1.5rem;
+		padding-left: 2.5rem;
+	}
+
+	#messages {
+		margin-left:0;
+		padding: 0;
+		padding-bottom: 60px;
+	}
+
+	#new_message {
+	width:80%;
+	resize: none;
+	height:2rem;
+	margin-right: 2px;
+	}
+
+	#submit-message {
+		height: 2rem;
+		width: 2rem;
+	}
+
+
+
+}
 
 
 
