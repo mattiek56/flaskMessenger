@@ -102,10 +102,28 @@
             };
 
             dis_username = username;
+           
             dis_timestamp = timestamp;
+           // console.log("timestamp, addMessage", dis_timestamp);
             
+            channel_name = channel_name;
 
             li.innerHTML = '<div class="message_details">' + '<h5 class="username_message">' + dis_username + '</h5>' + '<p id ="timestamp_message" class="timestamp_message">' + dis_timestamp + '</p>' + '<i id="delete" class="delete fa fa-trash-o"></i>' + '</div>' + '<div class="message_body">' + data.messages + '</div>';
+
+            deleteButton = li.getElementsByClassName("delete")[0];
+
+            deleteButton.addEventListener('click', deleteMessage, {passive:true});
+
+
+            function deleteMessage() {
+                console.log("clicked delete icon!", li);
+                messageToDelete = li.getElementsByClassName("message_body")[0].innerHTML;
+                timestamp_check = li.getElementsByClassName('timestamp_message')[0].innerHTML;
+                console.log('original', dis_timestamp);
+                socket.emit("delete message", {'username':dis_username, 'messageToDelete': messageToDelete, 'channel_name': channel_name, "timestamp": timestamp_check});
+                li.remove();
+            }
+            
 
             if (localStorage.getItem("username") == username) {
                 li.onmouseover = function () {
@@ -124,12 +142,16 @@
             if (localStorage.getItem("username") == username) {
                 li.ontouchstart = function () {
                     li.style.background="d7cdcc";
-                    i.getElementsByClassName("delete")[0].style.visibility = "visible";
+                    li.getElementsByClassName("delete")[0].style.visibility = "visible";
+                    li.getElementsByClassName("delete")[0].style.padding = "0 0 0 50px";
+
+
                 }
 
                 li.ontouchend = function () {
                     li.style.background = "white";
                     li.getElementsByClassName("delete")[0].style.visibility = "hidden";
+
                 }    
 
                 
@@ -149,14 +171,15 @@
             //console.log('entered loadMessages function');
             for (messages of data["messages"]) {
                // console.log("entered the for loop");
-                let timestamp = convertTimestamp(messages.ts);
+                let timestamp = messages.ts;
+                console.log("timestamp loadMessages", timestamp);
                 addMessage(messages.username, channel_name, timestamp, {"messages": messages.messages});
                 updateMessagesScroll();
             }
 
          } 
         
-        function convertTimestamp(timestamp) {
+        /*function convertTimestamp(timestamp) {
 
             const ts = timestamp;
             const milli_ts = 1000* ts;
@@ -164,7 +187,7 @@
             const formattedTime = date_obj.toLocaleString();
 
             return formattedTime;
-        }
+        } */
 
         function updateMessagesScroll(){
             var element = document.querySelector("#chat-message-log");
@@ -263,7 +286,7 @@
             //loading of relevant data for the user
          socket.on('user load', data => {
 
-            document.getElementById("display-username").innerHTML = "Welcome, " + data.username;
+            document.getElementById("display-username").innerHTML = "Welcome, " + localStorage.getItem("username");
 
             socket.emit("load data", {'username': data.username});
 
@@ -272,7 +295,7 @@
 
          socket.on('rejoin', data =>{
 
-                        document.getElementById("display-username").innerHTML = "Welcome, " + data.username;
+            document.getElementById("display-username").innerHTML = "Welcome, " + localStorage.getItem("username");
             console.log('entered the available channels socket');
             list_channels = data.list_channels;
             const channel_ul = document.querySelector('#sidebar-channels');
@@ -315,7 +338,7 @@
          
          socket.on('available channels', data => {
             //this will keep the entire list from repopulating and only display the 'newest'
-            document.getElementById("display-username").innerHTML = "Welcome, " + data.username;
+            document.getElementById("display-username").innerHTML = "Welcome, " + localStorage.getItem("username");
             console.log('entered the available channels socket');
             list_channels = data.list_channels;
             const channel_ul = document.querySelector('#sidebar-channels');
@@ -356,11 +379,11 @@
             channel_name = data.channel_name;
             //localStorage.setItem("current_channel", channel_name);
             timestamp = data.timestamp;
-            join_message = data.join_message;
+            //join_message = data.join_message;
 
             //console.log(join_message);
 
-            addMessage(username, channel_name, timestamp, {"messages": join_message});
+            //addMessage(username, channel_name, timestamp, {"messages": join_message});
             loadMessages(socket, channel_name, data);
             
          });
@@ -372,6 +395,19 @@
             timestamp = data.timestamp;
             addMessage(username, channel_name, timestamp, {"messages": message});
             
+         });
+
+         socket.on('remove message', data => {
+            console.log("entered the removal function");
+            timestamp = data.timestamp;
+            timestamp = timestamp;
+            document.querySelectorAll('.message').forEach(msgDiv => {
+                if (msgDiv.querySelector('.username_message').innerHTML == data.username && msgDiv.querySelector('.timestamp_message').innerHTML == timestamp){
+                    console.log("this was true", msgDiv);
+                    msgDiv.remove();
+                    
+                }
+            });
          });
 
 
@@ -449,7 +485,7 @@
 
         <div class ='chat-type'>
                 <form id="new_message_form">
-                    <textarea class='chat-box' name='message' id='new_message' type ='text' placeholder="Type your message here"></textarea>
+                    <textarea class='chat-box' name='message' id='new_message' type ='text' placeholder="Type your message here..."></textarea>
                     <button id='submit-message' class='chat-box fa fa-send-o' type='submit'></button>
 
             </form>

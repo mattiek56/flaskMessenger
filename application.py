@@ -73,20 +73,20 @@ def join_channel(data):
 	channel_name = data['channel_name']
 	print(channel_name)
 	username = data['username']
-	timestamp = time.time()
+	timestamp = time.ctime()
 	messages[channel_name]["users"].add(username)
-	messages[channel_name]["messages"].append({
-		"messages": "user has joined the channel",
-		"username": username,
-		"ts": timestamp
-		})
+	#messages[channel_name]["messages"].append({
+	#	"messages": "user has joined the channel",
+	#	"username": username,
+	#	"ts": timestamp,
+	#	})
 	messages_list = messages[channel_name]["messages"]
-	join_message = messages_list[-1]["messages"]
+	#join_message = messages_list[-1]["messages"]
 	if len(messages_list) > 100:
 		messages_list.pop(0)
 		print("popped off the first elem")
 	 
-	emit("user joined", {'username':username, "channel_name":channel_name, "messages": messages_list, "timestamp":timestamp, "join_message":join_message})
+	emit("user joined", {'username':username, "channel_name":channel_name, "messages": messages_list, "timestamp":timestamp})
 
 @socketio.on("add message")
 def add_message(data):
@@ -94,7 +94,7 @@ def add_message(data):
 	message = data['message']
 	username = data['username']
 	channel_name = data['channel_name']
-	timestamp = data['timestamp']
+	timestamp = time.ctime(data['timestamp'])
 	messages[channel_name]["messages"].append({
 		"messages":message,
 		"username": username,
@@ -106,6 +106,37 @@ def add_message(data):
 	print(messages[channel_name])
 	emit("send message", {'username':username, 'message': message, 'timestamp':timestamp, 'channel_name':channel_name}, broadcast=True)
 
+@socketio.on("delete message")
+def delete_message(data):
+	#print("entering deleting function")
+	messageToDelete = data["messageToDelete"]
+	print("this is the message to delete", messageToDelete)
+	username = data["username"]
+	print('this is user', username)
+	channel_name = data["channel_name"]
+	timestamp = data["timestamp"]
+	print('time',timestamp)
+	#print(messages)
+	
+	lm = messages[channel_name]["messages"]	
+
+	for m in range(len(lm)):
+			#print('length',len(lm))	
+			#was originally going through the list looking at strings, but this proved to be needlesly complicated in removing the value
+		print(m, lm[m]['messages'], messageToDelete) 
+		print(m, lm[m]['username'], username)
+		print(m, lm[m]['ts'], timestamp)
+		if lm[m]['messages'] == messageToDelete and lm[m]['username'] == username and lm[m]['ts'] == timestamp:
+			print('found a match')
+			del lm[m]
+				#timestamp = time.time()
+				#msgToDelete = lm[m]
+				#print("Delete this message", msgToDelete)
+			emit("remove message", {'username':username, 'channel_name':channel_name, 'timestamp':timestamp}, broadcast=True)
+			break
+			
+			
+			
 
 
 

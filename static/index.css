@@ -108,9 +108,17 @@ h5 {
 	width: 100%;
 }
 
+#channel-input {
+	display: inline-block;
+}
+
 .channel-input {
-	width: 85%;
+	width: 75%;
 	height: 2.25em;
+}
+
+.channel-input:focus {
+	border-color: orange;
 }
 
 #submit-channel {
@@ -193,8 +201,12 @@ border-radius: 10%;
 
 .delete {
 	visibility: hidden;
+	
 }
 
+.delete:active {
+	color: red;
+}
 
 .odd {
 	border-bottom: 1px solid #59656f;
@@ -223,9 +235,9 @@ border-radius: 10%;
 
 
 @media only screen 
-  and (min-device-width: 414px) 
-  and (max-device-width: 736px) 
-  and (-webkit-min-device-pixel-ratio: 3) { 
+  and (min-device-width: 375px) 
+  and (max-device-width: 812px) 
+  and (-webkit-min-device-pixel-ratio: 2) { 
 
   	.message {
   		width: 100%;
@@ -307,6 +319,92 @@ border-radius: 10%;
 	}
 
 
+
+}
+
+@media only screen 
+	and (min-device-width : 768px)
+	and (max-device-width : 1024px) {
+/* Styles */
+
+  	.message {
+  		width: 100%;
+  	}
+
+  	.test-container {
+  		display: grid;
+  	}
+
+  	.chat-window {
+  		margin-left: 0;
+  	}
+
+  	#closebtn {
+  		display: block;
+		float:right;
+		margin-right: 1rem;
+		color:white;
+		font-size: 20px;
+	}
+	#openbtn {
+		padding-left: 10px;
+		color: white;
+		background-color: #1D1E2C;
+	}
+
+	#menuBar {
+		display: contents;
+		float: left;
+		font-size: 35px;
+		cursor:pointer;
+		padding-left: 10px;
+
+	}
+
+  	#mySidebar {
+
+	position: fixed;
+	left:0;
+	background-color: #1D1E2C;
+	height: 100%;
+	max-height:100%;
+	color:#FFFFFF;
+	width: 0;
+	z-index: 1;
+	top:0;
+	overflow-x: hidden;
+	
+}
+
+	.container {
+		padding-left: 0px!important;
+	}
+
+	.chat-type {
+		bottom:0;
+		margin-left: 0;
+		height: 100px;
+		padding-top: 1.5rem;
+		padding-left: 2.5rem;
+	}
+
+	#messages {
+		margin-left:0;
+		padding: 0;
+		padding-bottom: 60px;
+	}
+
+	#new_message {
+	width:80%;
+	resize: none;
+	height:2rem;
+	margin-right: 2px;
+	}
+
+	#submit-message {
+		height: 2rem;
+		width: 2rem;
+	}
 
 }
 
