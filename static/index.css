@@ -59,7 +59,7 @@ h5 {
 .chat-window {
 	height: 100vh;
 	width: 100vw;
-	margin-left: 2rem;
+	
 }
 /* .center-modal {
 	text-align: center;
@@ -87,6 +87,7 @@ h5 {
 
 #mySidebar {
 	position: fixed;
+	z-index: 999;
 	left:0;
 	background-color: #1D1E2C;
 	height: 100%;
@@ -148,10 +149,12 @@ h5 {
 /* styling for chat body */
 
 .chat-type {
-	position: absolute;
-	bottom:2em;
-	margin-left: 6rem;
+	position: fixed;
+	height: 10%;
+	bottom:0;
+	left: 0;
 	width: 100%;
+	padding-left: 300px;
 	background-color: white;
 	border-top: 2px solid #59656f;
 }
@@ -166,11 +169,13 @@ border-radius: 10%;
 }
 
 #new_message_form {
+	margin-left: 2rem;
+	margin-top: 1rem;
 	display: flex;
 }
 
 #new_message {
-	width:60%;
+	width: 75% !important;
 	resize: none;
 	height:2.5rem;
 }
@@ -181,22 +186,23 @@ border-radius: 10%;
 }
 
 
-#chat-message-log {
-	height: 90%;
+#chat-window-scroll {
+	height: 100vh;
 	background-color: white;
 	overflow: auto;
 }
 
 
 #messages {
-	margin-left: 2%;
+	margin-left: 0px;
+	padding-left: 0px;
 	list-style: none;
 	padding-top: 1em;
 }
 
 .message {
 	padding: 0.75rem;
-	width: 65%;
+	width: 100%;
 }
 
 .delete {
@@ -235,8 +241,8 @@ border-radius: 10%;
 
 
 @media only screen 
-  and (min-device-width: 375px) 
-  and (max-device-width: 812px) 
+  and (min-width: 375px) 
+  and (max-width: 812px) 
   and (-webkit-min-device-pixel-ratio: 2) { 
 
   	.message {
@@ -246,6 +252,14 @@ border-radius: 10%;
   	.test-container {
   		display: grid;
   	}
+
+  	.message-details {
+  		display: contents;
+  	}
+
+  	.delete { 
+  		padding: 0 0 0 5rem;
+  	 }
 
   	.chat-window {
   		margin-left: 0;
@@ -276,6 +290,7 @@ border-radius: 10%;
   	#mySidebar {
 
 	position: fixed;
+	z-index: 999;
 	left:0;
 	background-color: #1D1E2C;
 	height: 100%;
@@ -290,20 +305,31 @@ border-radius: 10%;
 
 	.container {
 		padding-left: 0px!important;
+		margin-left: 0;
 	}
 
 	.chat-type {
 		bottom:0;
 		margin-left: 0;
+		padding-left: 300px;
 		height: 100px;
 		padding-top: 1.5rem;
-		padding-left: 2.5rem;
+		padding-left: 10%;
 	}
 
 	#messages {
 		margin-left:0;
 		padding: 0;
-		padding-bottom: 60px;
+		padding-bottom: 33%;
+	}
+
+	
+	#new_message_form {
+	margin-left: 0;
+	margin-top: 0;
+	display: flex;
+	}
+
 	}
 
 	#new_message {
@@ -323,8 +349,8 @@ border-radius: 10%;
 }
 
 @media only screen 
-	and (min-device-width : 768px)
-	and (max-device-width : 1024px) {
+	and (min-width : 768px)
+	and (max-width : 1024px) {
 /* Styles */
 
   	.message {
@@ -337,8 +363,12 @@ border-radius: 10%;
 
   	.chat-window {
   		margin-left: 0;
+  		padding-left: 250px!important;
   	}
 
+  	.delete {
+  		padding: 0 0 0 25rem;
+  	}
   	#closebtn {
   		display: block;
 		float:right;
@@ -364,13 +394,14 @@ border-radius: 10%;
   	#mySidebar {
 
 	position: fixed;
+
 	left:0;
 	background-color: #1D1E2C;
 	height: 100%;
 	max-height:100%;
 	color:#FFFFFF;
 	width: 0;
-	z-index: 1;
+	z-index: 999;
 	top:0;
 	overflow-x: hidden;
 	
@@ -378,22 +409,30 @@ border-radius: 10%;
 
 	.container {
 		padding-left: 0px!important;
+		margin-left: 0;
 	}
 
 	.chat-type {
 		bottom:0;
 		margin-left: 0;
+		padding-left: 300px;
 		height: 100px;
 		padding-top: 1.5rem;
-		padding-left: 2.5rem;
+		padding-left: 10%;
 	}
 
 	#messages {
 		margin-left:0;
 		padding: 0;
-		padding-bottom: 60px;
+		padding-bottom: 5%;
 	}
 
+
+#new_message_form {
+	margin-left: 0;
+	margin-top: 0;
+	display: flex;
+}
 	#new_message {
 	width:80%;
 	resize: none;
@@ -408,5 +447,70 @@ border-radius: 10%;
 
 }
 
+@media only screen and (min-device-width: 1024px){
+  .chat-window {
+  	padding-left: 240px;
+  	margin-left: 2px;
+  	} /* your css rules for ipad landscape */
+
+  	.message {
+  		width: 100%;
+  	}
+
+  	
+}
+
+@media all and (min-device-width: 1366px) {
+  .chat-window {
+  	padding-left: 150px;
+  	margin-left: 2px;
+  	} /* your css rules for ipad landscape */
+
+  	.message {
+  		width: 100%;
+  	}
+
+  	
+}
+
+@media all and (min-device-width: 1400px) {
+  .chat-window {
+  	padding-left: 145px;
+  	
+  	} /* your css rules for ipad landscape */
+
+  	.message {
+  		width: 100%;
+  	}
+
+  	}
 
 
+@media only screen 
+  and (min-device-width: 375px) 
+  and (max-device-width: 667px) 
+  and (-webkit-min-device-pixel-ratio: 2)
+  and (orientation: portrait){
+
+	.message_details {
+		display: contents;
+	}
+
+	.timestamp_message {
+		padding-left: 0;
+	}
+}
+
+
+/*@media only screen and (min-device-width: 1400px){
+
+
+	.chat-window {
+		padding-left:7.5vw;
+	}
+
+	#chat-window-scroll {
+		background-color: red;
+	}
+
+} */

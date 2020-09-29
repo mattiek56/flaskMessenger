@@ -190,7 +190,7 @@
         } */
 
         function updateMessagesScroll(){
-            var element = document.querySelector("#chat-message-log");
+            var element = document.querySelector("#chat-window-scroll");
             element.scrollTop = element.scrollHeight;
             }
          //this function is how you can keep the messages from other channels from appearing in the newly loaded channel
@@ -426,8 +426,8 @@
                 <h5 class='center-modal'> Welcome to Mack! </h5>
                 <p class='center-modal'> Please enter a username to begin... </p>
                 <div class="form-group">
-                <input type='text' class='form-control' placeholder='Enter a username here' name='username' data-set='username'>
-            </div>
+                    <input type='text' class='form-control' placeholder='Enter a username here' name='username' data-set='username'>
+                </div>
                 <button id='submit-username' type='submit' class='btn btn-primary center-modal'>Submit</button>
             </form>
         </div>
@@ -435,7 +435,7 @@
 
     
 
-    <div class="wrapper">
+    
     <!-- creating the header to display username and such -->
         <div id="mySidebar" class='sidebar-menu'>
             <div class='topbar'>
@@ -465,32 +465,30 @@
         </div>
 
 
-<div class='test-container'>
+    <div class='test-container'>
         <div id ='menuBar'>
             <span id='openbtn'>&#9776;</span>
         </div>
 
-
-        <div class = 'chat-window' id='chat-window-scroll'>
-                <div id='chat-message-log' class='chat-log'>
+        <div class = 'chat-window' id='chat-window-scroll'>          
                     <!--- all of the messages will appear here -->
                     <ul id='messages' class='log'>
                         <!-- messages will go here -->
-                    </ul>
-                </div>
+                    </ul>                
 
         </div>
     </div>
 
 
         <div class ='chat-type'>
+            
                 <form id="new_message_form">
                     <textarea class='chat-box' name='message' id='new_message' type ='text' placeholder="Type your message here..."></textarea>
                     <button id='submit-message' class='chat-box fa fa-send-o' type='submit'></button>
 
             </form>
         </div>
-    </div>
+   
 
 
 </div>
