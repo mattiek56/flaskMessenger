@@ -16,6 +16,32 @@
 
         //connect to websocket (pulled from src5 code)
 
+        document.querySelector('#submit-channel').disabled = true;
+       
+
+        document.querySelector('#channel').addEventListener("keyup", event => {
+                    if (document.querySelector('#channel').value.length > 0)
+                        document.querySelector('#submit-channel').disabled = false;
+
+
+                    else
+                        document.querySelector('#submit-channel').disabled = true;
+
+                });
+
+
+        document.querySelector('#submit-message').disabled = true;
+       
+
+        document.querySelector('#new_message').addEventListener("keyup", event => {
+                    if (document.querySelector('#new_message').value.length > 0)
+                        document.querySelector('#submit-message').disabled = false;
+
+
+                    else
+                        document.querySelector('#submit-message').disabled = true;
+
+                });
     
 
         document.getElementById("closebtn").addEventListener('click', event => {
@@ -251,6 +277,8 @@
             };
 
             //adding in a new channel 
+
+           
             
             channelForm.addEventListener('submit', event => {
 
