@@ -54,6 +54,9 @@ h5 {
 .wrapper {
 	height: 100vh;
 }
+.test-container {
+	 display: grid;
+}
 
 
 .chat-window {
@@ -74,19 +77,20 @@ h5 {
 	display: none;
 }
 
+
 .topbar {
 	margin-top: 1rem;
 }
 
 #menuBar {
-	display: none;
+	 display: none;
 }
 
 
 /* this needs to be adjusted to reflect media size */
 
 #mySidebar {
-	position: fixed;
+  	position: fixed;
 	z-index: 999;
 	left:0;
 	background-color: #1D1E2C;
@@ -95,6 +99,11 @@ h5 {
 	color:#FFFFFF;
 	width: unset;
 	
+}
+
+.container {
+	padding-left: 0px!important;
+	margin-left: 0;
 }
 
 
@@ -150,10 +159,11 @@ h5 {
 
 .chat-type {
 	position: fixed;
-	height: 10%;
+	height: 100px;
 	bottom:0;
-	left: 0;
+	margin-left: 0;
 	width: 100%;
+	padding-top: 1.5rem;
 	padding-left: 300px;
 	background-color: white;
 	border-top: 2px solid #59656f;
@@ -163,22 +173,24 @@ border-radius: 10%;
 	background-color: #9c528b;
 	color: #FFFFFF;
 	border-style: none!important;
-	height: 2.5rem;
-	width: 2.5rem;
+	height: 2rem;
+	width: 2rem;
 	
 }
 
 #new_message_form {
-	margin-left: 2rem;
-	margin-top: 1rem;
+	margin-left: 0;
+	margin-top: 0;
 	display: flex;
 }
 
-#new_message {
-	width: 75% !important;
-	resize: none;
-	height:2.5rem;
-}
+    #new_message {
+    width:80%;
+    resize: none;
+    height:2rem;
+    margin-right: 2px;
+    }
+
 
 
 #channel-link > a{
@@ -190,23 +202,26 @@ border-radius: 10%;
 	height: 100vh;
 	background-color: white;
 	overflow: auto;
+	padding-left: 284px;
 }
 
 
 #messages {
 	margin-left: 0px;
-	padding-left: 0px;
+	padding: 0;
 	list-style: none;
-	padding-top: 1em;
+	padding-bottom: 5%;
 }
 
 .message {
 	padding: 0.75rem;
 	width: 100%;
+
 }
 
 .delete {
 	visibility: hidden;
+	padding:  0 0 0 5rem;
 	
 }
 
@@ -223,7 +238,7 @@ border-radius: 10%;
 }
 
 .message_details {
-	display: inline-flex;
+	display: contents;
 }
 
 
@@ -239,33 +254,18 @@ border-radius: 10%;
 	padding-left: 1rem;
 }
 
+@media only screen and (max-width: 992px){ 
 
-@media only screen 
-  and (min-width: 375px) 
-  and (max-width: 812px) 
-  and (-webkit-min-device-pixel-ratio: 2) { 
+	#menuBar {
+		display: contents;
+        float: left;
+        font-size: 35px;
+        cursor:pointer;
+        padding-left: 10px;
+	}
 
-  	.message {
-  		width: 100%;
-  	}
 
-  	.test-container {
-  		display: grid;
-  	}
-
-  	.message-details {
-  		display: contents;
-  	}
-
-  	.delete { 
-  		padding: 0 0 0 5rem;
-  	 }
-
-  	.chat-window {
-  		margin-left: 0;
-  	}
-
-  	#closebtn {
+	#closebtn {
   		display: block;
 		float:right;
 		margin-right: 1rem;
@@ -278,123 +278,12 @@ border-radius: 10%;
 		background-color: #1D1E2C;
 	}
 
-	#menuBar {
-		display: contents;
-		float: left;
-		font-size: 35px;
-		cursor:pointer;
-		padding-left: 10px;
+	
 
-	}
-
-  	#mySidebar {
+	#mySidebar {
 
 	position: fixed;
-	z-index: 999;
-	left:0;
-	background-color: #1D1E2C;
-	height: 100%;
-	max-height:100%;
-	color:#FFFFFF;
-	width: 0;
-	z-index: 1;
-	top:0;
-	overflow-x: hidden;
 	
-}
-
-	.container {
-		padding-left: 0px!important;
-		margin-left: 0;
-	}
-
-	.chat-type {
-		bottom:0;
-		margin-left: 0;
-		padding-left: 300px;
-		height: 100px;
-		padding-top: 1.5rem;
-		padding-left: 10%;
-	}
-
-	#messages {
-		margin-left:0;
-		padding: 0;
-		padding-bottom: 33%;
-	}
-
-	
-	#new_message_form {
-	margin-left: 0;
-	margin-top: 0;
-	display: flex;
-	}
-
-	}
-
-	#new_message {
-	width:80%;
-	resize: none;
-	height:2rem;
-	margin-right: 2px;
-	}
-
-	#submit-message {
-		height: 2rem;
-		width: 2rem;
-	}
-
-
-
-}
-
-@media only screen 
-	and (min-width : 768px)
-	and (max-width : 1024px) {
-/* Styles */
-
-  	.message {
-  		width: 100%;
-  	}
-
-  	.test-container {
-  		display: grid;
-  	}
-
-  	.chat-window {
-  		margin-left: 0;
-  		padding-left: 250px!important;
-  	}
-
-  	.delete {
-  		padding: 0 0 0 25rem;
-  	}
-  	#closebtn {
-  		display: block;
-		float:right;
-		margin-right: 1rem;
-		color:white;
-		font-size: 20px;
-	}
-	#openbtn {
-		padding-left: 10px;
-		color: white;
-		background-color: #1D1E2C;
-	}
-
-	#menuBar {
-		display: contents;
-		float: left;
-		font-size: 35px;
-		cursor:pointer;
-		padding-left: 10px;
-
-	}
-
-  	#mySidebar {
-
-	position: fixed;
-
 	left:0;
 	background-color: #1D1E2C;
 	height: 100%;
@@ -403,114 +292,19 @@ border-radius: 10%;
 	width: 0;
 	z-index: 999;
 	top:0;
-	overflow-x: hidden;
 	
-}
-
-	.container {
-		padding-left: 0px!important;
-		margin-left: 0;
+	overflow-y: auto;
 	}
 
 	.chat-type {
-		bottom:0;
-		margin-left: 0;
-		padding-left: 300px;
-		height: 100px;
-		padding-top: 1.5rem;
 		padding-left: 10%;
 	}
 
-	#messages {
-		margin-left:0;
-		padding: 0;
-		padding-bottom: 5%;
-	}
-
-
-#new_message_form {
-	margin-left: 0;
-	margin-top: 0;
-	display: flex;
-}
-	#new_message {
-	width:80%;
-	resize: none;
-	height:2rem;
-	margin-right: 2px;
-	}
-
-	#submit-message {
-		height: 2rem;
-		width: 2rem;
-	}
-
-}
-
-@media only screen and (min-device-width: 1024px){
-  .chat-window {
-  	padding-left: 240px;
-  	margin-left: 2px;
-  	} /* your css rules for ipad landscape */
-
-  	.message {
-  		width: 100%;
-  	}
-
-  	
-}
-
-@media all and (min-device-width: 1366px) {
-  .chat-window {
-  	padding-left: 150px;
-  	margin-left: 2px;
-  	} /* your css rules for ipad landscape */
-
-  	.message {
-  		width: 100%;
-  	}
-
-  	
-}
-
-@media all and (min-device-width: 1400px) {
-  .chat-window {
-  	padding-left: 145px;
-  	
-  	} /* your css rules for ipad landscape */
-
-  	.message {
-  		width: 100%;
-  	}
-
-  	}
-
-
-@media only screen 
-  and (min-device-width: 375px) 
-  and (max-device-width: 667px) 
-  and (-webkit-min-device-pixel-ratio: 2)
-  and (orientation: portrait){
-
-	.message_details {
-		display: contents;
-	}
-
-	.timestamp_message {
+	#chat-window-scroll { 
 		padding-left: 0;
 	}
-}
+
+ }
 
 
-/*@media only screen and (min-device-width: 1400px){
 
-
-	.chat-window {
-		padding-left:7.5vw;
-	}
-
-	#chat-window-scroll {
-		background-color: red;
-	}
-
-} */
